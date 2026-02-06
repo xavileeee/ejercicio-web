@@ -58,6 +58,16 @@ def signup_for_activity(activity_name: str, email: str):
     # Validate activity exists
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
+    
+    # Normalize email (strip spaces, lowercase) and simple validation
+    email = email.strip().lower()
+    # Validar email format (simple check)
+    if "@" not in email or "." not in email:
+        raise HTTPException(status_code=400, detail="Invalid email format")     
+    
+    # Validar que no se haya inscrito ya
+    if email in activities[activity_name]["participants"]:
+        raise HTTPException(status_code=400, detail="Student already signed up for this activity")  
 
     # Get the specific activity
     activity = activities[activity_name]
